@@ -1,151 +1,60 @@
-import nltk
+import spacy
 from bs4 import BeautifulSoup
-from nltk.corpus import stopwords
-from nltk.stem import WordNetLemmatizer
-from nltk.tokenize import word_tokenize
+import re
 
-nltk.download('stopwords')
-nltk.download('punkt')
-nltk.download('wordnet')
+# Загрузка модели для русского языка
+nlp = spacy.load("ru_core_news_sm")
 
-# Загрузка стоп-слов (предлоги, союзы и т.д.)
-stop_words = set(stopwords.words("russian"))
+# Функция для токенизации текста
+def tokenize_text(text):
+    tokens = re.findall(r'\b\w+\b', text)
+    return tokens
 
-lemmatizer = WordNetLemmatizer()
+# Функция для фильтрации токенов
+def filter_tokens(tokens):
+    filtered_tokens = set()
+    stopwords = set(['и', 'в', 'на', 'с', 'по', 'о', 'а', 'не', 'или', 'что', 'как'])
 
-
-def extract_text_from_html(html_file_path):
-    with open(html_file_path, 'r', encoding='utf-8') as file:
-        html_content = file.read()
-
-    soup = BeautifulSoup(html_content, 'html.parser')
-    text = soup.get_text()
-    return text
-
-
-def tokenize_and_lemmatize(text):
-    # Токенизация
-    tokens = word_tokenize(text)
-
-    # Лемматизация
-    lemmatized_tokens = [lemmatizer.lemmatize(token.lower()) for token in tokens]
-
-    # Отфильтровать стоп-слова, числа и "мусор"
-    filtered_tokens = [token for token in lemmatized_tokens if token.isalpha() and token not in stop_words]
+    for token in tokens:
+        if token.isalpha() and token not in stopwords and not any(char.isdigit() for char in token):
+            filtered_tokens.add(token.lower())
 
     return filtered_tokens
 
+# Функция для лемматизации токенов
+def lemmatize_tokens(tokens):
+    lemmatized_tokens = {}
 
-def process_document(html_file_path):
-    # Извлечение текста из HTML
-    text = extract_text_from_html(html_file_path)
+    for token in tokens:
+        doc = nlp(token)
+        lemma = doc[0].lemma_ if doc else token
+        lemmatized_tokens[token] = lemma
 
-    # Токенизация и лемматизация
-    tokens = tokenize_and_lemmatize(text)
+    return lemmatized_tokens
 
-    return tokens
+# Чтение HTML-кода из файла
+with open('C:/Users/rming/PycharmProjects/pythonProject/firstTask/page_1.html', 'r', encoding='utf-8') as file:
+    html_content = file.read()
 
+# Используем BeautifulSoup для извлечения текста из HTML
+soup = BeautifulSoup(html_content, 'html.parser')
+text_content = soup.get_text()
 
-def save_tokens_to_file(tokens, file_path):
-    with open(file_path, 'w', encoding='utf-8') as file:
-        for token in tokens:
-            file.write(token + '\n')
+# Токенизация текста
+tokens = tokenize_text(text_content)
 
+# Фильтрация токенов
+filtered_tokens = filter_tokens(tokens)
 
-def save_lemmatized_tokens_to_file(lemmatized_tokens, file_path):
-    with open(file_path, 'w', encoding='utf-8') as file:
-        for lemmatized_token in lemmatized_tokens:
-            file.write(lemmatized_token + '\n')
+# Сохранение списка токенов в файл tokens.txt
+with open('tokens.txt', 'w', encoding='utf-8') as output_file:
+    for token in filtered_tokens:
+        output_file.write(token + '\n')
 
+# Лемматизация токенов
+lemmatized_tokens = lemmatize_tokens(filtered_tokens)
 
-if __name__ == "__main__":
-    # Замените 'html_file_path' на путь к вашему HTML-файлу
-
-    html_file_path = 'C:/Users/rming/PycharmProjects/pythonProject/firstTask/page_1.html'
-
-    # Обработка документа
-    tokens = process_document(html_file_path)
-
-    # Сохранение токенов в файл
-    save_tokens_to_file(tokens, 'tokens.txt')
-
-    # Сохранение лемматизированных токенов в файл
-    lemmatized_tokens = [lemmatizer.lemmatize(token.lower()) for token in tokens]
-    save_lemmatized_tokens_to_file(lemmatized_tokens, 'lemmatized_tokens.txt')
-
-# import re
-#
-# import nltk
-# from bs4 import BeautifulSoup
-# from nltk.tokenize import word_tokenize
-# from nltk.stem import WordNetLemmatizer
-# from nltk.corpus import stopwords
-#
-# nltk.download('stopwords')
-# nltk.download('punkt')
-# nltk.download('wordnet')
-#
-# # Загрузка стоп-слов (предлоги, союзы и т.д.)
-# stop_words = set(stopwords.words("russian"))
-#
-#
-# def extract_text_from_html(html_content):
-#     soup = BeautifulSoup(html_content, 'html.parser')
-#     text = soup.get_text()
-#     return text
-#
-#
-# def tokenize_and_lemmatize(text):
-#     # Токенизация
-#     tokens = word_tokenize(text)
-#
-#     # Лемматизация
-#     lemmatizer = WordNetLemmatizer()
-#     lemmatized_tokens = [lemmatizer.lemmatize(token.lower()) for token in tokens]
-#
-#     # Отфильтровать стоп-слова, числа и "мусор"
-#     filtered_tokens = [token for token in lemmatized_tokens if token.isalpha() and token not in stop_words]
-#
-#     return filtered_tokens
-#
-#
-# def process_document(html_content):
-#     # Чтение HTML-файла
-#     with open(html_file_path, 'r', encoding='utf-8') as file:
-#         html_content = file.read()
-#
-#     # Извлечение текста из HTML
-#     text = extract_text_from_html(html_content)
-#
-#     # Токенизация и лемматизация
-#     tokens = tokenize_and_lemmatize(text)
-#
-#     return tokens
-#
-# def save_tokens_to_file(tokens, file_path):
-#     with open(file_path, 'w', encoding='utf-8') as file:
-#         for token in tokens:
-#             file.write(token + '\n')
-#
-# def save_lemmatized_tokens_to_file(lemmatized_tokens, file_path):
-#     with open(file_path, 'w', encoding='utf-8') as file:
-#         for lemmatized_token in lemmatized_tokens:
-#             file.write(lemmatized_token + '\n')
-#
-#
-#
-# if __name__ == "__main__":
-#     # Замените 'html_content' на реальный HTML-контент вашего документа
-#
-#     html_file_path = 'C:/Users/rming/PycharmProjects/pythonProject/firstTask/page_1.html'
-#
-#     # Обработка документа
-#     tokens = process_document(html_file_path)
-#
-#     # Сохранение токенов в файл
-#     save_tokens_to_file(tokens, 'tokens.txt')
-#
-#     # Сохранение лемматизированных токенов в файл
-#     lemmatized_tokens = [lemmatizer.lemmatize(token.lower()) for token in tokens]
-#     save_lemmatized_tokens_to_file(lemmatized_tokens, 'lemmatized_tokens.txt')
-#
+# Сохранение лемматизированных токенов в файл lemmitized_tokens.txt
+with open('lemmatized_tokens.txt', 'w', encoding='utf-8') as lemma_file:
+    for token, lemma in lemmatized_tokens.items():
+        lemma_file.write(f"{token}-{lemma}\n")
