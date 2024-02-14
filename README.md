@@ -7,4 +7,4 @@
 
 # Task 2
 1. Tokens.txt - список токенов
-2. Lemmatized_tokens.txt - токен и его лемматизация через "-"
+2. grouped_tokens.txt - сгруппированные по лемме токены
