@@ -60,10 +60,10 @@
 # with open('grouped_tokens.txt', 'w', encoding='utf-8') as grouped_file:
 #     for lemma, lemma_tokens in lemmatized_tokens.items():
 #         grouped_file.write(f"{lemma} {' '.join(lemma_tokens)}\n")
-
-
+import nltk.corpus
 import spacy
 from bs4 import BeautifulSoup
+from nltk.corpus import stopwords
 import re
 from collections import defaultdict
 
@@ -78,10 +78,10 @@ def tokenize_text(text):
 # Функция для фильтрации токенов
 def filter_tokens(tokens):
     filtered_tokens = set()
-    stopwords = set(['и', 'в', 'на', 'с', 'по', 'о', 'а', 'не', 'или', 'что', 'как'])
+    stops = set(stopwords.words('russian'))
 
     for token in tokens:
-        if token.isalpha() and token not in stopwords and not any(char.isdigit() for char in token):
+        if token.isalpha() and token not in stops and not any(char.isdigit() for char in token):
             filtered_tokens.add(token.lower())
 
     return filtered_tokens
