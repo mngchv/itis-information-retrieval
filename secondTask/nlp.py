@@ -15,7 +15,15 @@ def filter_tokens(tokens):
     stops = set(stopwords.words('russian'))
 
     for token in tokens:
-        if token.isalpha() and token not in stops and not any(char.isdigit() for char in token):
+        # Дополнительные проверки для фильтрации "мусора"
+        if (
+            len(token) > 2 and  # Исключаем короткие слова
+            token.isalpha() and
+            token not in stops and
+            not any(char.isdigit() for char in token) and
+            token.lower() not in {'и', 'в', 'с', 'на', 'по', 'за', 'из', 'к', 'а', 'но', 'или', 'во', 'от'} and
+            token.lower() not in {'см', 'также', 'nbsp', 'gt', 'lt', 'amp', 'raquo', 'laquo', 'mdash', 'ndash'}
+        ):
             filtered_tokens.add(token.lower())
 
     return filtered_tokens
@@ -24,9 +32,11 @@ def lemmatize_tokens(tokens):
     lemmatized_tokens = defaultdict(list)
 
     for token in tokens:
-        doc = nlp(token)
-        lemma = doc[0].lemma_ if doc else token
-        lemmatized_tokens[lemma].append(token)
+        # Дополнительная проверка для исключения неправильно распарсенных слов
+        if not any(char.isdigit() for char in token):
+            doc = nlp(token)
+            lemma = doc[0].lemma_ if doc else token
+            lemmatized_tokens[lemma].append(token)
 
     return lemmatized_tokens
 
