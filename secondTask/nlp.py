@@ -1,10 +1,20 @@
 import spacy
-from bs4 import BeautifulSoup
-from nltk.corpus import stopwords
 import re
+import nltk
+import langdetect
+import html2text
+from nltk.corpus import stopwords
 from collections import defaultdict
 
+# Загружаем необходимые ресурсы nltk
+nltk.download('punkt')
+nltk.download('stopwords')
+
+# Загружаем языковую модель spaCy
 nlp = spacy.load("ru_core_news_sm")
+
+# Инициализируем стоп-слова
+stops = set(stopwords.words('russian'))
 
 def tokenize_text(text):
     tokens = re.findall(r'\b\w+\b', text)
@@ -12,7 +22,6 @@ def tokenize_text(text):
 
 def filter_tokens(tokens):
     filtered_tokens = set()
-    stops = set(stopwords.words('russian'))
 
     for token in tokens:
         # Дополнительные проверки для фильтрации "мусора"
@@ -22,11 +31,13 @@ def filter_tokens(tokens):
             token not in stops and
             not any(char.isdigit() for char in token) and
             token.lower() not in {'и', 'в', 'с', 'на', 'по', 'за', 'из', 'к', 'а', 'но', 'или', 'во', 'от'} and
-            token.lower() not in {'см', 'также', 'nbsp', 'gt', 'lt', 'amp', 'raquo', 'laquo', 'mdash', 'ndash'}
+            token.lower() not in {'см', 'также', 'nbsp', 'gt', 'lt', 'amp', 'raquo', 'laquo', 'mdash', 'ndash'} and
+            langdetect.detect(token) == 'ru'  # Проверяем, является ли слово русским
         ):
             filtered_tokens.add(token.lower())
 
     return filtered_tokens
+
 
 def lemmatize_tokens(tokens):
     lemmatized_tokens = defaultdict(list)
@@ -44,13 +55,13 @@ with open('tokens.txt', 'w', encoding='utf-8') as tokens_file, \
      open('grouped_tokens.txt', 'w', encoding='utf-8') as grouped_file:
 
     for i in range(1, 101):
-        filename = f'C:/Users/rming/PycharmProjects/pythonProject/firstTask/page_{i}.html'
+        filename = f'/content/page_{i}.html'
 
         with open(filename, 'r', encoding='utf-8') as file:
             html_content = file.read()
 
-        soup = BeautifulSoup(html_content, 'html.parser')
-        text_content = soup.get_text()
+        # Преобразуем HTML в чистый текст
+        text_content = html2text.html2text(html_content)
 
         tokens = tokenize_text(text_content)
 
