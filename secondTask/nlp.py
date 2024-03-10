@@ -52,7 +52,8 @@ def lemmatize_tokens(tokens):
     return lemmatized_tokens
 
 with open('tokens.txt', 'w', encoding='utf-8') as tokens_file, \
-     open('grouped_tokens.txt', 'w', encoding='utf-8') as grouped_file:
+     open('grouped_tokens.txt', 'w', encoding='utf-8') as grouped_file, \
+     open('lemms.txt', 'w', encoding='utf-8') as lems_file:
 
     for i in range(1, 101):
         filename = f'/content/page_{i}.html'
@@ -74,3 +75,4 @@ with open('tokens.txt', 'w', encoding='utf-8') as tokens_file, \
 
         for lemma, lemma_tokens in lemmatized_tokens.items():
             grouped_file.write(f"{lemma} {' '.join(lemma_tokens)}\n")
+            lems_file.write(f"{lemma}\n")
