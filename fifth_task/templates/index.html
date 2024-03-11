@@ -100,7 +100,7 @@
             <span class="counter">Всего найдено результатов: {{ result|length }}</span>
                 {% for item in result %}
                      <div class='result_item'>
-                        <span>{{ loop.index }}.</span><a class="link" href="{{ item.0 }}"> {{ item.0 }} </a>
+                        <span>{{ loop.index }}.</span><a class="link" href="{{ item }}"> {{ item }} </a>
                     </div>
                 {% endfor %}
             {% endif %}

@@ -68,7 +68,7 @@ def search(query, links_list, lemmas_list, zero_matrix, morph):
     result = []
     for doc_index, score in sorted_similarities:
         if str(doc_index) in links_list:
-            result.append((links_list[str(doc_index)], score))
+            result.append(links_list[str(doc_index)])
         else:
             print(f"Ошибка: Документ под индексом {doc_index} не найден в ссылках.")
     return result
