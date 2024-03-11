@@ -19,3 +19,6 @@
 1. metrics.py - методы для вычисления tf и idf по файлам выгрузки
 2. tf_idf_tokens - просчитанные tf и idf для каждого токена
 3. tf_idf_lemmas - просчитанные tf и idf для каждой леммы
+
+# Task 5 ✅
+![image](https://github.com/mngchv/itis-information-retrieval/assets/79534367/80ef461b-fc21-40e1-8160-cde42e8ee958)
