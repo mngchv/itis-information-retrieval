@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Inc.</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            display: flex;
+            flex-direction: row;
+            gap: 16px;
+            font-family:Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            background: #505050;
+            align-items: center;
+        }
+        .header .logo {
+            font-size: 32px;
+            padding: 12px;
+            color: #d0d0d0;
+        }
+        .header span {
+            color: #8ab4f8;
+        }
+        .input-block {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            width: 100%;
+        }
+        .input-block input {
+            background: #d0d0d0;
+            height: 16px;
+            border-radius: 8px 0 0 8px;
+            border: none;
+            font-size: 16px;
+            line-height: normal;
+            outline: none;
+            padding: 8px;
+            width: 40%;
+        }
+        .input-block button {
+            height: 32px;
+            border-radius: 0 8px 8px 0;
+            border: none;
+            background: #d0d0d0;
+        }
+        .input-block button:hover {
+            cursor: pointer;
+            color: white;
+        }
+        .main {
+            min-height: calc(100vh - 62.5px);
+            background: #505050cb;
+        }
+        .main .results {
+            padding: 16px 0 16px 179px;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        .results .counter {
+            font-size: 24px;
+            color: #d0d0d0;
+        }
+        .main .result_item {
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 12px;
+            font-size: 16px;
+            color: #8ab4f8;
+        }
+        .result_item span {
+            font-size: 20px;
+            color: #d0d0d0;
+        }
+        .result_item .link {
+            font-size: 20px;
+            color: #8ab4f8
+        }
+      </style>
+</head>
+<body>
+    <header class='header'>
+        <div class='logo'>
+            Searchi<span>fyer</span>
+        </div>
+        <form method="GET" action="/" class='input-block'>
+            <input id="query" type="text" name="query" value="{{query}}">
+            <button type="submit">Найти</button>
+        </form>
+    </header>
+    <main class='main'>
+        <div class='results'>
+            {% if result %}
+            <span class="counter">Всего найдено результатов: {{ result|length }}</span>
+                {% for item in result %}
+                     <div class='result_item'>
+                        <span>{{ loop.index }}.</span><a class="link" href="{{ item.0 }}"> {{ item.0 }} </a>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </main>
+</body>
+</html>

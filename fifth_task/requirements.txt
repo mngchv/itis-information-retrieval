@@ -1,0 +1,4 @@
+uvicorn
+fastapi
+scipy
+pymorphy3
